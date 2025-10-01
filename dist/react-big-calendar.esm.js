@@ -1920,6 +1920,15 @@ var EventRow = /*#__PURE__*/ (function (_React$Component) {
     },
   ])
 })(React.Component)
+EventRow.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? _objectSpread(
+        {
+          segments: PropTypes.array,
+        },
+        EventRowMixin.propTypes
+      )
+    : {}
 EventRow.defaultProps = _objectSpread({}, EventRowMixin.defaultProps)
 
 function endOfRange(_ref) {
@@ -2601,6 +2610,12 @@ var Header = function Header(_ref) {
     label
   )
 }
+Header.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        label: PropTypes.node,
+      }
+    : {}
 
 var DateHeader = function DateHeader(_ref) {
   var label = _ref.label,
@@ -4295,14 +4310,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
-ResourceHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        index: PropTypes.number,
-        resource: PropTypes.object,
-      }
-    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -7889,10 +7896,11 @@ function dayjs(dayjsLib) {
     var endOffset = -dayjs.tz(+ed, tzName).utcOffset()
     return startOffset - endOffset
   }
-  function getDayStartDstOffset(start) {
-    var dayStart = dayjs(start).startOf('day')
-    return getDstOffset(dayStart, start)
-  }
+
+  // function getDayStartDstOffset(start) {
+  //   const dayStart = dayjs(start).startOf('day')
+  //   return getDstOffset(dayStart, start)
+  // }
 
   /*** BEGIN localized date arithmetic methods with dayjs ***/
   function defineComparators(a, b, unit) {
@@ -8084,7 +8092,7 @@ function dayjs(dayjsLib) {
   function getMinutesFromMidnight(start) {
     var dayStart = dayjs(start).startOf('day')
     var day = dayjs(start)
-    return day.diff(dayStart, 'minutes') + getDayStartDstOffset(start)
+    return day.diff(dayStart, 'minutes')
   }
 
   // These two are used by DateSlotMetrics

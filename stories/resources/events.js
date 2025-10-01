@@ -191,18 +191,18 @@ export default [
     start: new Date(2023, 2, 12, 0, 0, 0),
     end: new Date(2023, 2, 12, 4, 30, 0),
   },
-  // {
-  //   id: 27,
-  //   title: 'DST changes on this day (Europe)',
-  //   start: new Date(2025, 9, 26, 1, 0, 0),
-  //   end: new Date(2025, 9, 26, 4, 30, 0),
-  // },
-  //   {
-  //   id: 28,
-  //   title: 'Test Otiliu',
-  //   start: new Date(2025, 9, 25, 6, 0, 0),
-  //   end: new Date(2025, 9, 25, 8, 30, 0),
-  // },
+  {
+    id: 27,
+    title: 'DST changes on this day (Europe)',
+    start: new Date(2025, 9, 26, 1, 0, 0),
+    end: new Date(2025, 9, 26, 4, 30, 0),
+  },
+  {
+    id: 28,
+    title: 'Test Otiliu',
+    start: new Date(2025, 9, 25, 6, 0, 0),
+    end: new Date(2025, 9, 25, 8, 30, 0),
+  },
   {
     id: 29,
     title: 'Test Otiliu 123',

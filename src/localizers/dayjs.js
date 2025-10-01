@@ -104,10 +104,10 @@ export default function (dayjsLib) {
     return startOffset - endOffset
   }
 
-  function getDayStartDstOffset(start) {
-    const dayStart = dayjs(start).startOf('day')
-    return getDstOffset(dayStart, start)
-  }
+  // function getDayStartDstOffset(start) {
+  //   const dayStart = dayjs(start).startOf('day')
+  //   return getDstOffset(dayStart, start)
+  // }
 
   /*** BEGIN localized date arithmetic methods with dayjs ***/
   function defineComparators(a, b, unit) {
@@ -294,7 +294,7 @@ export default function (dayjsLib) {
   function getMinutesFromMidnight(start) {
     const dayStart = dayjs(start).startOf('day')
     const day = dayjs(start)
-    return day.diff(dayStart, 'minutes') + getDayStartDstOffset(start)
+    return day.diff(dayStart, 'minutes')
   }
 
   // These two are used by DateSlotMetrics

@@ -46086,15 +46086,6 @@
       },
     ])
   })(React.Component)
-  EventRow.propTypes =
-    'development' !== 'production'
-      ? _objectSpread2(
-          {
-            segments: propTypesExports.array,
-          },
-          EventRowMixin.propTypes
-        )
-      : {}
   EventRow.defaultProps = _objectSpread2({}, EventRowMixin.defaultProps)
 
   /**
@@ -55679,10 +55670,11 @@
       var endOffset = -dayjs.tz(+ed, tzName).utcOffset()
       return startOffset - endOffset
     }
-    function getDayStartDstOffset(start) {
-      var dayStart = dayjs(start).startOf('day')
-      return getDstOffset(dayStart, start)
-    }
+
+    // function getDayStartDstOffset(start) {
+    //   const dayStart = dayjs(start).startOf('day')
+    //   return getDstOffset(dayStart, start)
+    // }
 
     /*** BEGIN localized date arithmetic methods with dayjs ***/
     function defineComparators(a, b, unit) {
@@ -55880,7 +55872,7 @@
     function getMinutesFromMidnight(start) {
       var dayStart = dayjs(start).startOf('day')
       var day = dayjs(start)
-      return day.diff(dayStart, 'minutes') + getDayStartDstOffset(start)
+      return day.diff(dayStart, 'minutes')
     }
 
     // These two are used by DateSlotMetrics
