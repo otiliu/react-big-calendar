@@ -234,9 +234,8 @@ export default function (dayjsLib) {
     return dt.minutes()
   }
 
-  function firstOfWeek(culture) {
-    const data = culture ? dayjsLib.localeData(culture) : dayjsLib.localeData()
-    return data ? data.firstDayOfWeek() : 0
+  function firstOfWeek() {
+    return 1 // dayjs always has Monday as first day of week
   }
 
   function firstVisibleDay(date) {

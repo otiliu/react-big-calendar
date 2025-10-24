@@ -2601,12 +2601,6 @@ var Header = function Header(_ref) {
     label
   )
 }
-Header.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-      }
-    : {}
 
 var DateHeader = function DateHeader(_ref) {
   var label = _ref.label,
@@ -2625,16 +2619,6 @@ var DateHeader = function DateHeader(_ref) {
     label
   )
 }
-DateHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        date: PropTypes.instanceOf(Date),
-        drilldownView: PropTypes.string,
-        onDrillDown: PropTypes.func,
-        isOffRange: PropTypes.bool,
-      }
-    : {}
 
 var _excluded$6 = ['date', 'className']
 var eventsForWeek = function eventsForWeek(
@@ -3641,6 +3625,16 @@ var TimeSlotGroup = /*#__PURE__*/ (function (_Component) {
     },
   ])
 })(Component)
+TimeSlotGroup.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        renderSlot: PropTypes.func,
+        group: PropTypes.array.isRequired,
+        resource: PropTypes.any,
+        components: PropTypes.object,
+        getters: PropTypes.object,
+      }
+    : {}
 
 function stringifyPercent(v) {
   return typeof v === 'string' ? v : v + '%'
@@ -4301,6 +4295,14 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
+ResourceHeader.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        label: PropTypes.node,
+        index: PropTypes.number,
+        resource: PropTypes.object,
+      }
+    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -5785,6 +5787,17 @@ var WorkWeek = /*#__PURE__*/ (function (_React$Component) {
     },
   ])
 })(React.Component)
+WorkWeek.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        date: PropTypes.instanceOf(Date).isRequired,
+        localizer: PropTypes.any,
+        min: PropTypes.instanceOf(Date),
+        max: PropTypes.instanceOf(Date),
+        scrollToTime: PropTypes.instanceOf(Date),
+        enableAutoScroll: PropTypes.bool,
+      }
+    : {}
 WorkWeek.defaultProps = TimeGrid.defaultProps
 WorkWeek.range = workWeekRange
 WorkWeek.navigate = Week.navigate
@@ -8029,8 +8042,7 @@ function dayjs(dayjsLib) {
     return dt.minutes()
   }
   function firstOfWeek(culture) {
-    var data = culture ? dayjsLib.localeData(culture) : dayjsLib.localeData()
-    return data ? data.firstDayOfWeek() : 0
+    return 1 // dayjs always has Monday as first day of week
   }
   function firstVisibleDay(date) {
     var firstDayOfMonth = dayjs(date).startOf('month')
