@@ -73,6 +73,29 @@ export default function (dayjsLib) {
   dayjsLib.extend(utc)
   dayjsLib.extend(isLeapYear)
 
+  // Override weekStart for all locales
+  const originalLocale = dayjsLib.locale
+  dayjsLib.locale = function (preset, object, isLocal) {
+    if (object && object.weekStart !== undefined) {
+      object.weekStart = 1 // Force Monday
+    }
+    return originalLocale.call(this, preset, object, isLocal)
+  }
+
+  // Also update existing locale data
+  const originalLocaleData = dayjsLib.localeData
+  dayjsLib.localeData = function (locale) {
+    const data = originalLocaleData.call(this, locale)
+    if (data && data.weekStart !== undefined) {
+      data.weekStart = 1
+    }
+    // Override the method as well
+    if (data) {
+      data.firstDayOfWeek = () => 1
+    }
+    return data
+  }
+
   const locale = (dj, c) => (c ? dj.locale(c) : dj)
 
   // if the timezone plugin is loaded,

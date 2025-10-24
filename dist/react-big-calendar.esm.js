@@ -2601,12 +2601,6 @@ var Header = function Header(_ref) {
     label
   )
 }
-Header.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-      }
-    : {}
 
 var DateHeader = function DateHeader(_ref) {
   var label = _ref.label,
@@ -4291,14 +4285,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
-ResourceHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        index: PropTypes.number,
-        resource: PropTypes.object,
-      }
-    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -7850,6 +7836,31 @@ function dayjs(dayjsLib) {
   dayjsLib.extend(minMax)
   dayjsLib.extend(utc)
   dayjsLib.extend(isLeapYear)
+
+  // Override weekStart for all locales
+  var originalLocale = dayjsLib.locale
+  dayjsLib.locale = function (preset, object, isLocal) {
+    if (object && object.weekStart !== undefined) {
+      object.weekStart = 1 // Force Monday
+    }
+    return originalLocale.call(this, preset, object, isLocal)
+  }
+
+  // Also update existing locale data
+  var originalLocaleData = dayjsLib.localeData
+  dayjsLib.localeData = function (locale) {
+    var data = originalLocaleData.call(this, locale)
+    if (data && data.weekStart !== undefined) {
+      data.weekStart = 1
+    }
+    // Override the method as well
+    if (data) {
+      data.firstDayOfWeek = function () {
+        return 1
+      }
+    }
+    return data
+  }
   var locale = function locale(dj, c) {
     return c ? dj.locale(c) : dj
   }

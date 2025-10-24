@@ -47830,6 +47830,16 @@
       label
     )
   }
+  DateHeader.propTypes =
+    'development' !== 'production'
+      ? {
+          label: propTypesExports.node,
+          date: propTypesExports.instanceOf(Date),
+          drilldownView: propTypesExports.string,
+          onDrillDown: propTypesExports.func,
+          isOffRange: propTypesExports.bool,
+        }
+      : {}
 
   var _excluded$6 = ['date', 'className']
   var eventsForWeek = function eventsForWeek(
@@ -55641,6 +55651,31 @@
     dayjsLib.extend(minMax)
     dayjsLib.extend(utc)
     dayjsLib.extend(isLeapYear)
+
+    // Override weekStart for all locales
+    var originalLocale = dayjsLib.locale
+    dayjsLib.locale = function (preset, object, isLocal) {
+      if (object && object.weekStart !== undefined) {
+        object.weekStart = 1 // Force Monday
+      }
+      return originalLocale.call(this, preset, object, isLocal)
+    }
+
+    // Also update existing locale data
+    var originalLocaleData = dayjsLib.localeData
+    dayjsLib.localeData = function (locale) {
+      var data = originalLocaleData.call(this, locale)
+      if (data && data.weekStart !== undefined) {
+        data.weekStart = 1
+      }
+      // Override the method as well
+      if (data) {
+        data.firstDayOfWeek = function () {
+          return 1
+        }
+      }
+      return data
+    }
     var locale = function locale(dj, c) {
       return c ? dj.locale(c) : dj
     }
