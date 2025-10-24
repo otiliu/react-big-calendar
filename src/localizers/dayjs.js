@@ -75,6 +75,13 @@ export default function (dayjsLib) {
 
   const locale = (dj, c) => (c ? dj.locale(c) : dj)
 
+  const originalLocaleData = dayjsLib.localeData
+  dayjsLib.localeData = function (locale) {
+    const data = originalLocaleData.call(this, locale)
+    data.firstDayOfWeek = () => 1 // Always return Monday
+    return data
+  }
+
   // if the timezone plugin is loaded,
   // then use the timezone aware version
   const dayjs = dayjsLib.tz ? dayjsLib.tz : dayjsLib
