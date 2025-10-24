@@ -92,15 +92,9 @@ export default function (dayjsLib) {
     if (!dayjs.tz) {
       return st.toDate().getTimezoneOffset() - ed.toDate().getTimezoneOffset()
     }
-    /**
-     * If a default timezone has been applied, then
-     * use this to get the proper timezone offset, otherwise default
-     * the timezone to the browser local
-     */
-    const tzName = st.tz().$x.$timezone ?? dayjsLib.tz.guess()
-    // invert offsets to be inline with moment.js
-    const startOffset = -dayjs.tz(+st, tzName).utcOffset()
-    const endOffset = -dayjs.tz(+ed, tzName).utcOffset()
+    // Use the already timezone-aware objects directly
+    const startOffset = -st.utcOffset()
+    const endOffset = -ed.utcOffset()
     return startOffset - endOffset
   }
 
