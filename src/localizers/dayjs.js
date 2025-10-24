@@ -256,13 +256,17 @@ export default function (dayjsLib) {
   }
 
   function visibleDays(date) {
-    let current = firstVisibleDay(date)
+    const first = firstVisibleDay(date)
     const last = lastVisibleDay(date)
     const days = []
 
-    while (lte(current, last)) {
-      days.push(current)
-      current = add(current, 1, 'd')
+    // Calculate number of days in the range
+    const totalDays = dayjs(last).diff(dayjs(first), 'day') + 1
+
+    // Build array by incrementing date from start
+    for (let i = 0; i < totalDays; i++) {
+      const day = dayjs(first).add(i, 'day').startOf('day').toDate()
+      days.push(day)
     }
 
     return days

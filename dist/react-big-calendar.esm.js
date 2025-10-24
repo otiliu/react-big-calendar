@@ -4291,14 +4291,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
-ResourceHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        index: PropTypes.number,
-        resource: PropTypes.object,
-      }
-    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -8045,12 +8037,17 @@ function dayjs(dayjsLib) {
     return dayjs(date).endOf('month').endOf('week').toDate()
   }
   function visibleDays(date) {
-    var current = firstVisibleDay(date)
+    var first = firstVisibleDay(date)
     var last = lastVisibleDay(date)
     var days = []
-    while (lte(current, last)) {
-      days.push(current)
-      current = add(current, 1, 'd')
+
+    // Calculate number of days in the range
+    var totalDays = dayjs(last).diff(dayjs(first), 'day') + 1
+
+    // Build array by incrementing date from start
+    for (var i = 0; i < totalDays; i++) {
+      var day = dayjs(first).add(i, 'day').startOf('day').toDate()
+      days.push(day)
     }
     return days
   }
