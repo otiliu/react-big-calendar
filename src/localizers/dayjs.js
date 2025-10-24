@@ -52,8 +52,12 @@ export const formats = {
   agendaTimeRangeFormat: timeRangeFormat,
 }
 
+function pluralizeUnit(unit) {
+  return /s$/.test(unit) ? unit : unit + 's'
+}
+
 function fixUnit(unit) {
-  let datePart = unit ? unit.toLowerCase() : unit
+  let datePart = unit ? pluralizeUnit(unit.toLowerCase()) : unit
   if (datePart === 'FullYear') {
     datePart = 'year'
   } else if (!datePart) {
@@ -154,9 +158,10 @@ export default function (dayjsLib) {
     return dtA.isBefore(dtB, datePart)
   }
 
+  // FIXED: Changed from isSameOrBefore to isSameOrAfter
   function gte(a, b, unit) {
     const [dtA, dtB, datePart] = defineComparators(a, b, unit)
-    return dtA.isSameOrBefore(dtB, datePart)
+    return dtA.isSameOrAfter(dtB, datePart)
   }
 
   function lte(a, b, unit) {
@@ -186,13 +191,20 @@ export default function (dayjsLib) {
     return maxDt.toDate()
   }
 
+  // FIXED: Changed to use direct component setting instead of string formatting
   function merge(date, time) {
     if (!date && !time) return null
 
-    const tm = dayjs(time).format('HH:mm:ss')
-    const dt = dayjs(date).startOf('day').format('MM/DD/YYYY')
-    // We do it this way to avoid issues when timezone switching
-    return dayjsLib(`${dt} ${tm}`).toDate()
+    const tm = dayjs(time)
+    const dt = dayjs(date).startOf('day')
+
+    // Directly set time components to avoid DST issues with string parsing
+    return dt
+      .hour(tm.hour())
+      .minute(tm.minute())
+      .second(tm.second())
+      .millisecond(tm.millisecond())
+      .toDate()
   }
 
   function add(date, adder, unit) {
@@ -255,18 +267,15 @@ export default function (dayjsLib) {
     return dayjs(date).endOf('month').endOf('week').toDate()
   }
 
+  // FIXED: Changed from loop counter to while loop with date comparison (like Luxon)
   function visibleDays(date) {
-    const first = firstVisibleDay(date)
+    let current = firstVisibleDay(date)
     const last = lastVisibleDay(date)
     const days = []
 
-    // Calculate number of days in the range
-    const totalDays = dayjs(last).diff(dayjs(first), 'day') + 1
-
-    // Build array by incrementing date from start
-    for (let i = 0; i < totalDays; i++) {
-      const day = dayjs(first).add(i, 'day').startOf('day').toDate()
-      days.push(day)
+    while (lte(current, last)) {
+      days.push(current)
+      current = add(current, 1, 'day')
     }
 
     return days

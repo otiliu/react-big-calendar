@@ -47806,12 +47806,6 @@
       label
     )
   }
-  Header.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-        }
-      : {}
 
   var DateHeader = function DateHeader(_ref) {
     var label = _ref.label,
@@ -54292,7 +54286,7 @@
     })
   }
 
-  function pluralizeUnit(unit) {
+  function pluralizeUnit$1(unit) {
     return /s$/.test(unit) ? unit : unit + 's'
   }
   var weekRangeFormat$4 = function weekRangeFormat(_ref, culture, local) {
@@ -54361,7 +54355,7 @@
     agendaTimeRangeFormat: timeRangeFormat$4,
   }
   function fixUnit$1(unit) {
-    var datePart = unit ? pluralizeUnit(unit.toLowerCase()) : unit
+    var datePart = unit ? pluralizeUnit$1(unit.toLowerCase()) : unit
     if (datePart === 'FullYear') {
       datePart = 'year'
     } else if (!datePart) {
@@ -55622,8 +55616,11 @@
     agendaTimeFormat: 'LT',
     agendaTimeRangeFormat: timeRangeFormat,
   }
+  function pluralizeUnit(unit) {
+    return /s$/.test(unit) ? unit : unit + 's'
+  }
   function fixUnit(unit) {
-    var datePart = unit ? unit.toLowerCase() : unit
+    var datePart = unit ? pluralizeUnit(unit.toLowerCase()) : unit
     if (datePart === 'FullYear') {
       datePart = 'year'
     } else if (!datePart) {
@@ -55738,13 +55735,15 @@
         datePart = _defineComparators6[2]
       return dtA.isBefore(dtB, datePart)
     }
+
+    // FIXED: Changed from isSameOrBefore to isSameOrAfter
     function gte(a, b, unit) {
       var _defineComparators7 = defineComparators(a, b, unit),
         _defineComparators8 = _slicedToArray(_defineComparators7, 3),
         dtA = _defineComparators8[0],
         dtB = _defineComparators8[1],
         datePart = _defineComparators8[2]
-      return dtA.isSameOrBefore(dtB, datePart)
+      return dtA.isSameOrAfter(dtB, datePart)
     }
     function lte(a, b, unit) {
       var _defineComparators9 = defineComparators(a, b, unit),
@@ -55777,12 +55776,20 @@
       var maxDt = dayjsLib.max(dtA, dtB)
       return maxDt.toDate()
     }
+
+    // FIXED: Changed to use direct component setting instead of string formatting
     function merge(date, time) {
       if (!date && !time) return null
-      var tm = dayjs(time).format('HH:mm:ss')
-      var dt = dayjs(date).startOf('day').format('MM/DD/YYYY')
-      // We do it this way to avoid issues when timezone switching
-      return dayjsLib(''.concat(dt, ' ').concat(tm)).toDate()
+      var tm = dayjs(time)
+      var dt = dayjs(date).startOf('day')
+
+      // Directly set time components to avoid DST issues with string parsing
+      return dt
+        .hour(tm.hour())
+        .minute(tm.minute())
+        .second(tm.second())
+        .millisecond(tm.millisecond())
+        .toDate()
     }
     function add(date, adder, unit) {
       var datePart = fixUnit(unit)
@@ -55841,18 +55848,15 @@
     function lastVisibleDay(date) {
       return dayjs(date).endOf('month').endOf('week').toDate()
     }
+
+    // FIXED: Changed from loop counter to while loop with date comparison (like Luxon)
     function visibleDays(date) {
-      var first = firstVisibleDay(date)
+      var current = firstVisibleDay(date)
       var last = lastVisibleDay(date)
       var days = []
-
-      // Calculate number of days in the range
-      var totalDays = dayjs(last).diff(dayjs(first), 'day') + 1
-
-      // Build array by incrementing date from start
-      for (var i = 0; i < totalDays; i++) {
-        var day = dayjs(first).add(i, 'day').startOf('day').toDate()
-        days.push(day)
+      while (lte(current, last)) {
+        days.push(current)
+        current = add(current, 1, 'day')
       }
       return days
     }
