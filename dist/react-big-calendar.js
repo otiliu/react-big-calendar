@@ -47790,12 +47790,6 @@
       label
     )
   }
-  Header.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-        }
-      : {}
 
   var DateHeader = function DateHeader(_ref) {
     var label = _ref.label,
@@ -49464,16 +49458,6 @@
       },
     ])
   })(reactExports.Component)
-  TimeSlotGroup.propTypes =
-    'development' !== 'production'
-      ? {
-          renderSlot: propTypesExports.func,
-          group: propTypesExports.array.isRequired,
-          resource: propTypesExports.any,
-          components: propTypesExports.object,
-          getters: propTypesExports.object,
-        }
-      : {}
 
   function stringifyPercent(v) {
     return typeof v === 'string' ? v : v + '%'
