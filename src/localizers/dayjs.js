@@ -235,23 +235,21 @@ export default function (dayjsLib) {
   }
 
   function firstOfWeek() {
-    return 1 // dayjs always has Monday as first day of week
+    return 1 // Monday is always the first day of the week
   }
 
   function firstVisibleDay(date) {
     const firstDayOfMonth = dayjs(date).startOf('month')
-    let firstDayOfWeek = dayjs(firstDayOfMonth).startOf('week')
-    // special handling for leapyears until Dayjs patches it
-    if (dayjs(firstDayOfMonth).isLeapYear()) {
-      const day = firstDayOfMonth.toDate().getDay(),
-        diff = firstDayOfMonth.toDate().getDate() - day + (day == 0 ? -6 : 1)
-      firstDayOfWeek.date(diff)
-    }
-    return firstDayOfWeek.toDate()
+    const dayOfWeek = firstDayOfMonth.day() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const diffToMonday = (dayOfWeek + 6) % 7 // number of days to go back to Monday
+    return firstDayOfMonth.subtract(diffToMonday, 'day').toDate()
   }
 
   function lastVisibleDay(date) {
-    return dayjs(date).endOf('month').endOf('week').toDate()
+    const lastDayOfMonth = dayjs(date).endOf('month')
+    const dayOfWeek = lastDayOfMonth.day()
+    const diffToSunday = 7 - ((dayOfWeek + 6) % 7) - 1 // number of days to go forward to Sunday
+    return lastDayOfMonth.add(diffToSunday, 'day').toDate()
   }
 
   function visibleDays(date) {
@@ -261,7 +259,7 @@ export default function (dayjsLib) {
 
     while (lte(current, last)) {
       days.push(current)
-      current = add(current, 1, 'd')
+      current = add(current, 1, 'day')
     }
 
     return days

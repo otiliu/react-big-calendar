@@ -2619,6 +2619,16 @@ var DateHeader = function DateHeader(_ref) {
     label
   )
 }
+DateHeader.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        label: PropTypes.node,
+        date: PropTypes.instanceOf(Date),
+        drilldownView: PropTypes.string,
+        onDrillDown: PropTypes.func,
+        isOffRange: PropTypes.bool,
+      }
+    : {}
 
 var _excluded$6 = ['date', 'className']
 var eventsForWeek = function eventsForWeek(
@@ -3625,16 +3635,6 @@ var TimeSlotGroup = /*#__PURE__*/ (function (_Component) {
     },
   ])
 })(Component)
-TimeSlotGroup.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        renderSlot: PropTypes.func,
-        group: PropTypes.array.isRequired,
-        resource: PropTypes.any,
-        components: PropTypes.object,
-        getters: PropTypes.object,
-      }
-    : {}
 
 function stringifyPercent(v) {
   return typeof v === 'string' ? v : v + '%'
@@ -4295,14 +4295,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
-ResourceHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        index: PropTypes.number,
-        resource: PropTypes.object,
-      }
-    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -5787,17 +5779,6 @@ var WorkWeek = /*#__PURE__*/ (function (_React$Component) {
     },
   ])
 })(React.Component)
-WorkWeek.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        date: PropTypes.instanceOf(Date).isRequired,
-        localizer: PropTypes.any,
-        min: PropTypes.instanceOf(Date),
-        max: PropTypes.instanceOf(Date),
-        scrollToTime: PropTypes.instanceOf(Date),
-        enableAutoScroll: PropTypes.bool,
-      }
-    : {}
 WorkWeek.defaultProps = TimeGrid.defaultProps
 WorkWeek.range = workWeekRange
 WorkWeek.navigate = Week.navigate
@@ -8041,22 +8022,20 @@ function dayjs(dayjsLib) {
     var dt = dayjs(date)
     return dt.minutes()
   }
-  function firstOfWeek(culture) {
-    return 1 // dayjs always has Monday as first day of week
+  function firstOfWeek() {
+    return 1 // Monday is always the first day of the week
   }
   function firstVisibleDay(date) {
     var firstDayOfMonth = dayjs(date).startOf('month')
-    var firstDayOfWeek = dayjs(firstDayOfMonth).startOf('week')
-    // special handling for leapyears until Dayjs patches it
-    if (dayjs(firstDayOfMonth).isLeapYear()) {
-      var day = firstDayOfMonth.toDate().getDay(),
-        _diff = firstDayOfMonth.toDate().getDate() - day + (day == 0 ? -6 : 1)
-      firstDayOfWeek.date(_diff)
-    }
-    return firstDayOfWeek.toDate()
+    var dayOfWeek = firstDayOfMonth.day() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    var diffToMonday = (dayOfWeek + 6) % 7 // number of days to go back to Monday
+    return firstDayOfMonth.subtract(diffToMonday, 'day').toDate()
   }
   function lastVisibleDay(date) {
-    return dayjs(date).endOf('month').endOf('week').toDate()
+    var lastDayOfMonth = dayjs(date).endOf('month')
+    var dayOfWeek = lastDayOfMonth.day()
+    var diffToSunday = 7 - ((dayOfWeek + 6) % 7) - 1 // number of days to go forward to Sunday
+    return lastDayOfMonth.add(diffToSunday, 'day').toDate()
   }
   function visibleDays(date) {
     var current = firstVisibleDay(date)
@@ -8064,7 +8043,7 @@ function dayjs(dayjsLib) {
     var days = []
     while (lte(current, last)) {
       days.push(current)
-      current = add(current, 1, 'd')
+      current = add(current, 1, 'day')
     }
     return days
   }

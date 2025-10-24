@@ -46086,15 +46086,6 @@
       },
     ])
   })(React.Component)
-  EventRow.propTypes =
-    'development' !== 'production'
-      ? _objectSpread2(
-          {
-            segments: propTypesExports.array,
-          },
-          EventRowMixin.propTypes
-        )
-      : {}
   EventRow.defaultProps = _objectSpread2({}, EventRowMixin.defaultProps)
 
   /**
@@ -47815,12 +47806,6 @@
       label
     )
   }
-  Header.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-        }
-      : {}
 
   var DateHeader = function DateHeader(_ref) {
     var label = _ref.label,
@@ -47839,6 +47824,16 @@
       label
     )
   }
+  DateHeader.propTypes =
+    'development' !== 'production'
+      ? {
+          label: propTypesExports.node,
+          date: propTypesExports.instanceOf(Date),
+          drilldownView: propTypesExports.string,
+          onDrillDown: propTypesExports.func,
+          isOffRange: propTypesExports.bool,
+        }
+      : {}
 
   var _excluded$6 = ['date', 'className']
   var eventsForWeek = function eventsForWeek(
@@ -50156,14 +50151,6 @@
     var label = _ref.label
     return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
   }
-  ResourceHeader.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-          index: propTypesExports.number,
-          resource: propTypesExports.object,
-        }
-      : {}
 
   var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
     function TimeGridHeader() {
@@ -51672,6 +51659,17 @@
       },
     ])
   })(React.Component)
+  WorkWeek.propTypes =
+    'development' !== 'production'
+      ? {
+          date: propTypesExports.instanceOf(Date).isRequired,
+          localizer: propTypesExports.any,
+          min: propTypesExports.instanceOf(Date),
+          max: propTypesExports.instanceOf(Date),
+          scrollToTime: propTypesExports.instanceOf(Date),
+          enableAutoScroll: propTypesExports.bool,
+        }
+      : {}
   WorkWeek.defaultProps = TimeGrid.defaultProps
   WorkWeek.range = workWeekRange
   WorkWeek.navigate = Week.navigate
@@ -55840,22 +55838,20 @@
       var dt = dayjs(date)
       return dt.minutes()
     }
-    function firstOfWeek(culture) {
-      return 1 // dayjs always has Monday as first day of week
+    function firstOfWeek() {
+      return 1 // Monday is always the first day of the week
     }
     function firstVisibleDay(date) {
       var firstDayOfMonth = dayjs(date).startOf('month')
-      var firstDayOfWeek = dayjs(firstDayOfMonth).startOf('week')
-      // special handling for leapyears until Dayjs patches it
-      if (dayjs(firstDayOfMonth).isLeapYear()) {
-        var day = firstDayOfMonth.toDate().getDay(),
-          _diff = firstDayOfMonth.toDate().getDate() - day + (day == 0 ? -6 : 1)
-        firstDayOfWeek.date(_diff)
-      }
-      return firstDayOfWeek.toDate()
+      var dayOfWeek = firstDayOfMonth.day() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      var diffToMonday = (dayOfWeek + 6) % 7 // number of days to go back to Monday
+      return firstDayOfMonth.subtract(diffToMonday, 'day').toDate()
     }
     function lastVisibleDay(date) {
-      return dayjs(date).endOf('month').endOf('week').toDate()
+      var lastDayOfMonth = dayjs(date).endOf('month')
+      var dayOfWeek = lastDayOfMonth.day()
+      var diffToSunday = 7 - ((dayOfWeek + 6) % 7) - 1 // number of days to go forward to Sunday
+      return lastDayOfMonth.add(diffToSunday, 'day').toDate()
     }
     function visibleDays(date) {
       var current = firstVisibleDay(date)
@@ -55863,7 +55859,7 @@
       var days = []
       while (lte(current, last)) {
         days.push(current)
-        current = add(current, 1, 'd')
+        current = add(current, 1, 'day')
       }
       return days
     }
