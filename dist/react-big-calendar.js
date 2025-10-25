@@ -46086,6 +46086,15 @@
       },
     ])
   })(React.Component)
+  EventRow.propTypes =
+    'development' !== 'production'
+      ? _objectSpread2(
+          {
+            segments: propTypesExports.array,
+          },
+          EventRowMixin.propTypes
+        )
+      : {}
   EventRow.defaultProps = _objectSpread2({}, EventRowMixin.defaultProps)
 
   /**
@@ -47824,16 +47833,6 @@
       label
     )
   }
-  DateHeader.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-          date: propTypesExports.instanceOf(Date),
-          drilldownView: propTypesExports.string,
-          onDrillDown: propTypesExports.func,
-          isOffRange: propTypesExports.bool,
-        }
-      : {}
 
   var _excluded$6 = ['date', 'className']
   var eventsForWeek = function eventsForWeek(
@@ -55933,17 +55932,19 @@
         _ref7$range = _ref7.range,
         rangeStart = _ref7$range.start,
         rangeEnd = _ref7$range.end
-      var startOfDay = dayjs(start).startOf('day')
+      // Use the date string to avoid DST issues
+      var startOfDay = dayjs(dayjs(start).format('YYYY-MM-DD')).toDate()
       var eEnd = dayjs(end)
       var rStart = dayjs(rangeStart)
       var rEnd = dayjs(rangeEnd)
-      var startsBeforeEnd = startOfDay.isSameOrBefore(rEnd, 'day')
+      var startsBeforeEnd = dayjs(startOfDay).isSameOrBefore(rEnd, 'day')
       // when the event is zero duration we need to handle a bit differently
-      var sameMin = !startOfDay.isSame(eEnd, 'minutes')
+      var sameMin = !dayjs(startOfDay).isSame(eEnd, 'minutes')
       var endsAfterStart = sameMin
         ? eEnd.isAfter(rStart, 'minutes')
         : eEnd.isSameOrAfter(rStart, 'minutes')
-      return startsBeforeEnd && endsAfterStart
+      var result = startsBeforeEnd && endsAfterStart
+      return result
     }
     function isSameDate(date1, date2) {
       var dt = dayjs(date1)
