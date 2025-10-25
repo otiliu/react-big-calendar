@@ -4,6 +4,8 @@ import { Calendar, Views, dayjsLocalizer } from 'react-big-calendar'
 import DemoLink from '../../DemoLink.component'
 import events from '../../resources/events'
 
+import 'dayjs/locale/en-gb'
+
 // Note that the dayjsLocalizer extends Day.js with the following plugins:
 // - IsBetween
 // - IsSameOrAfter
@@ -15,10 +17,17 @@ import events from '../../resources/events'
 
 // add optional time zone support
 import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import isoWeek from 'dayjs/plugin/isoWeek'
+
+dayjs.extend(weekOfYear)
+dayjs.extend(isoWeek)
 dayjs.extend(timezone)
+dayjs.extend(utc)
+dayjs.locale('en-GB')
 
 const djLocalizer = dayjsLocalizer(dayjs)
-dayjs.locale('en-gb')
 
 const ColoredDateCellWrapper = ({ children }) =>
   React.cloneElement(React.Children.only(children), {
@@ -49,7 +58,7 @@ export default function Dayjs({ ...props }) {
           defaultDate={defaultDate}
           events={events}
           localizer={djLocalizer}
-          culture="en-GB"
+          culture={'en-GB'}
           max={max}
           showMultiDayTimes
           step={60}

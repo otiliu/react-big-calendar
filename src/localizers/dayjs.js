@@ -340,19 +340,22 @@ export default function (dayjsLib) {
     event: { start, end },
     range: { start: rangeStart, end: rangeEnd },
   }) {
-    const startOfDay = dayjs(start).startOf('day')
+    // Use the date string to avoid DST issues
+    const startOfDay = dayjs(dayjs(start).format('YYYY-MM-DD')).toDate()
     const eEnd = dayjs(end)
     const rStart = dayjs(rangeStart)
     const rEnd = dayjs(rangeEnd)
 
-    const startsBeforeEnd = startOfDay.isSameOrBefore(rEnd, 'day')
+    const startsBeforeEnd = dayjs(startOfDay).isSameOrBefore(rEnd, 'day')
     // when the event is zero duration we need to handle a bit differently
-    const sameMin = !startOfDay.isSame(eEnd, 'minutes')
+    const sameMin = !dayjs(startOfDay).isSame(eEnd, 'minutes')
     const endsAfterStart = sameMin
       ? eEnd.isAfter(rStart, 'minutes')
       : eEnd.isSameOrAfter(rStart, 'minutes')
 
-    return startsBeforeEnd && endsAfterStart
+    const result = startsBeforeEnd && endsAfterStart
+
+    return result
   }
 
   function isSameDate(date1, date2) {

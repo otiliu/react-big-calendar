@@ -126,18 +126,6 @@ export default [
     end: new Date(2015, 3, 22, 2, 0, 0),
   },
   {
-    id: 14,
-    title: 'Today',
-    start: new Date(new Date().setHours(new Date().getHours() - 3)),
-    end: new Date(new Date().setHours(new Date().getHours() + 3)),
-  },
-  {
-    id: 15,
-    title: 'Point in Time Event',
-    start: now,
-    end: now,
-  },
-  {
     id: 16,
     title: 'Video Record',
     start: new Date(2015, 3, 14, 15, 30, 0),
@@ -203,10 +191,22 @@ export default [
     start: new Date(2023, 2, 12, 0, 0, 0),
     end: new Date(2023, 2, 12, 4, 30, 0),
   },
+  // {
+  //   id: 27,
+  //   title: 'DST changes on this day (Europe)',
+  //   start: new Date(2025, 9, 26, 1, 0, 0),
+  //   end: new Date(2025, 9, 26, 4, 30, 0),
+  // },
+  //   {
+  //   id: 28,
+  //   title: 'Test Otiliu',
+  //   start: new Date(2025, 9, 25, 6, 0, 0),
+  //   end: new Date(2025, 9, 25, 8, 30, 0),
+  // },
   {
-    id: 27,
-    title: 'DST starts on this day (Europe)',
-    start: new Date(2023, 2, 26, 0, 0, 0),
-    end: new Date(2023, 2, 26, 4, 30, 0),
+    id: 29,
+    title: 'Test Otiliu 123',
+    start: new Date(2025, 9, 26, 6, 0, 0),
+    end: new Date(2025, 9, 26, 8, 30, 0),
   },
 ]
