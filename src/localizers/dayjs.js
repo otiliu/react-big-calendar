@@ -262,7 +262,9 @@ export default function (dayjsLib) {
 
     while (lte(current, last)) {
       days.push(current)
-      current = add(current, 1, 'd')
+      // Force a clean date increment by going through startOf twice
+      const next = dayjs(current).add(1, 'day')
+      current = dayjs(next.format('YYYY-MM-DD')).toDate()
     }
 
     return days

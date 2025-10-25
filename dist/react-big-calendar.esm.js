@@ -4291,14 +4291,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label
   return /*#__PURE__*/ React.createElement(React.Fragment, null, label)
 }
-ResourceHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        index: PropTypes.number,
-        resource: PropTypes.object,
-      }
-    : {}
 
 var TimeGridHeader = /*#__PURE__*/ (function (_React$Component) {
   function TimeGridHeader() {
@@ -8050,7 +8042,9 @@ function dayjs(dayjsLib) {
     var days = []
     while (lte(current, last)) {
       days.push(current)
-      current = add(current, 1, 'd')
+      // Force a clean date increment by going through startOf twice
+      var next = dayjs(current).add(1, 'day')
+      current = dayjs(next.format('YYYY-MM-DD')).toDate()
     }
     return days
   }

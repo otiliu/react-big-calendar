@@ -18,6 +18,7 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(timezone)
 
 const djLocalizer = dayjsLocalizer(dayjs)
+dayjs.locale('en-gb')
 
 const ColoredDateCellWrapper = ({ children }) =>
   React.cloneElement(React.Children.only(children), {
@@ -32,7 +33,7 @@ export default function Dayjs({ ...props }) {
       components: {
         timeSlotWrapper: ColoredDateCellWrapper,
       },
-      defaultDate: new Date(2015, 3, 1),
+      defaultDate: new Date(),
       max: dayjs().endOf('day').subtract(1, 'hours').toDate(),
       views: Object.keys(Views).map((k) => Views[k]),
     }),
@@ -48,6 +49,7 @@ export default function Dayjs({ ...props }) {
           defaultDate={defaultDate}
           events={events}
           localizer={djLocalizer}
+          culture="en-GB"
           max={max}
           showMultiDayTimes
           step={60}
