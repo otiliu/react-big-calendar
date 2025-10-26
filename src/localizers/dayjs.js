@@ -131,7 +131,19 @@ export default function (dayjsLib) {
   // dayjs comparison operations *always* convert both sides to dayjs objects
   // prior to running the comparisons
   function eq(a, b, unit) {
-    const [dtA, dtB, datePart] = defineComparators(a, b, unit)
+    const datePart = fixUnit(unit)
+    // For month/year comparisons, use year/month values directly to avoid DST issues
+    if (datePart === 'month') {
+      const dtA = dayjs(a)
+      const dtB = dayjs(b)
+      return dtA.year() === dtB.year() && dtA.month() === dtB.month()
+    }
+    if (datePart === 'year') {
+      const dtA = dayjs(a)
+      const dtB = dayjs(b)
+      return dtA.year() === dtB.year()
+    }
+    const [dtA, dtB] = defineComparators(a, b, unit)
     return dtA.isSame(dtB, datePart)
   }
 
