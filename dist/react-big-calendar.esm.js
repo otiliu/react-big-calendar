@@ -2619,16 +2619,6 @@ var DateHeader = function DateHeader(_ref) {
     label
   )
 }
-DateHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        date: PropTypes.instanceOf(Date),
-        drilldownView: PropTypes.string,
-        onDrillDown: PropTypes.func,
-        isOffRange: PropTypes.bool,
-      }
-    : {}
 
 var _excluded$6 = ['date', 'className']
 var eventsForWeek = function eventsForWeek(
@@ -7889,10 +7879,6 @@ function dayjs(dayjsLib) {
     var endOffset = -dayjs.tz(+ed, tzName).utcOffset()
     return startOffset - endOffset
   }
-  function getDayStartDstOffset(start) {
-    var dayStart = dayjs(start).startOf('day')
-    return getDstOffset(dayStart, start)
-  }
 
   /*** BEGIN localized date arithmetic methods with dayjs ***/
   function defineComparators(a, b, unit) {
@@ -7957,7 +7943,7 @@ function dayjs(dayjsLib) {
       dtA = _defineComparators8[0],
       dtB = _defineComparators8[1],
       datePart = _defineComparators8[2]
-    return dtA.isSameOrBefore(dtB, datePart)
+    return dtA.isSameOrAfter(dtB, datePart)
   }
   function lte(a, b, unit) {
     var _defineComparators9 = defineComparators(a, b, unit),
@@ -8079,12 +8065,23 @@ function dayjs(dayjsLib) {
 
   // dayjs will automatically handle DST differences in it's calculations
   function getTotalMin(start, end) {
-    return diff(start, end, 'minutes')
+    // Instead of using actual elapsed time, calculate based on clock time
+    // to avoid DST creating 25-hour or 23-hour days in the UI
+    var startMinutes = getMinutesFromMidnight(start)
+    var endMinutes = getMinutesFromMidnight(end)
+
+    // If end is on a different day, add 1440 minutes per day
+    var dayDiff = diff(start, end, 'day')
+    return dayDiff * 1440 + (endMinutes - startMinutes)
   }
   function getMinutesFromMidnight(start) {
-    var dayStart = dayjs(start).startOf('day')
     var day = dayjs(start)
-    return day.diff(dayStart, 'minutes') + getDayStartDstOffset(start)
+
+    // Use the actual hour and minute values rather than diff
+    // This ensures we always get 0-1440 minutes regardless of DST
+    var hours = day.hour()
+    var minutes = day.minute()
+    return hours * 60 + minutes
   }
 
   // These two are used by DateSlotMetrics

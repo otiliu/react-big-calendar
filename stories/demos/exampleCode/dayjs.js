@@ -43,7 +43,7 @@ export default function Dayjs({ ...props }) {
         timeSlotWrapper: ColoredDateCellWrapper,
       },
       defaultDate: new Date(),
-      max: dayjs().endOf('day').subtract(1, 'hours').toDate(),
+      max: dayjs().endOf('day').toDate(),
       views: Object.keys(Views).map((k) => Views[k]),
     }),
     []
@@ -61,7 +61,6 @@ export default function Dayjs({ ...props }) {
           culture={'en-GB'}
           max={max}
           showMultiDayTimes
-          step={60}
           views={views}
         />
       </div>

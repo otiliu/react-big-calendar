@@ -104,11 +104,6 @@ export default function (dayjsLib) {
     return startOffset - endOffset
   }
 
-  function getDayStartDstOffset(start) {
-    const dayStart = dayjs(start).startOf('day')
-    return getDstOffset(dayStart, start)
-  }
-
   /*** BEGIN localized date arithmetic methods with dayjs ***/
   function defineComparators(a, b, unit) {
     const datePart = fixUnit(unit)
@@ -156,7 +151,7 @@ export default function (dayjsLib) {
 
   function gte(a, b, unit) {
     const [dtA, dtB, datePart] = defineComparators(a, b, unit)
-    return dtA.isSameOrBefore(dtB, datePart)
+    return dtA.isSameOrAfter(dtB, datePart)
   }
 
   function lte(a, b, unit) {
@@ -288,13 +283,26 @@ export default function (dayjsLib) {
 
   // dayjs will automatically handle DST differences in it's calculations
   function getTotalMin(start, end) {
-    return diff(start, end, 'minutes')
+    // Instead of using actual elapsed time, calculate based on clock time
+    // to avoid DST creating 25-hour or 23-hour days in the UI
+    const startMinutes = getMinutesFromMidnight(start)
+    const endMinutes = getMinutesFromMidnight(end)
+
+    // If end is on a different day, add 1440 minutes per day
+    const dayDiff = diff(start, end, 'day')
+
+    return dayDiff * 1440 + (endMinutes - startMinutes)
   }
 
   function getMinutesFromMidnight(start) {
-    const dayStart = dayjs(start).startOf('day')
     const day = dayjs(start)
-    return day.diff(dayStart, 'minutes') + getDayStartDstOffset(start)
+
+    // Use the actual hour and minute values rather than diff
+    // This ensures we always get 0-1440 minutes regardless of DST
+    const hours = day.hour()
+    const minutes = day.minute()
+
+    return hours * 60 + minutes
   }
 
   // These two are used by DateSlotMetrics
