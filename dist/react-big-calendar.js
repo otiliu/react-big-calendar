@@ -47806,12 +47806,6 @@
       label
     )
   }
-  Header.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-        }
-      : {}
 
   var DateHeader = function DateHeader(_ref) {
     var label = _ref.label,
@@ -47830,16 +47824,6 @@
       label
     )
   }
-  DateHeader.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-          date: propTypesExports.instanceOf(Date),
-          drilldownView: propTypesExports.string,
-          onDrillDown: propTypesExports.func,
-          isOffRange: propTypesExports.bool,
-        }
-      : {}
 
   var _excluded$6 = ['date', 'className']
   var eventsForWeek = function eventsForWeek(
@@ -55585,7 +55569,6 @@
     return (
       local.format(start, 'MMMM DD', culture) +
       ' – ' +
-      // updated to use this localizer 'eq()' method
       local.format(
         end,
         local.eq(start, end, 'month') ? 'DD' : 'MMMM DD',
@@ -55642,15 +55625,12 @@
   }
   function fixUnit(unit) {
     var datePart = unit ? unit.toLowerCase() : unit
-    if (datePart === 'FullYear') {
-      datePart = 'year'
-    } else if (!datePart) {
-      datePart = undefined
-    }
+    if (datePart === 'fullyear') datePart = 'year'
+    if (!datePart) datePart = undefined
     return datePart
   }
   function dayjs(dayjsLib) {
-    // load dayjs plugins
+    // load plugins
     dayjsLib.extend(isBetween)
     dayjsLib.extend(isSameOrAfter)
     dayjsLib.extend(isSameOrBefore)
@@ -55662,40 +55642,28 @@
     var locale = function locale(dj, c) {
       return c ? dj.locale(c) : dj
     }
-
-    // if the timezone plugin is loaded,
-    // then use the timezone aware version
     var dayjs = dayjsLib.tz ? dayjsLib.tz : dayjsLib
     function getTimezoneOffset(date) {
-      // ensures this gets cast to timezone
       return dayjs(date).toDate().getTimezoneOffset()
     }
     function getDstOffset(start, end) {
       var _st$tz$$x$$timezone
-      // convert to dayjs, in case
       var st = dayjs(start)
       var ed = dayjs(end)
-      // if not using the dayjs timezone plugin
       if (!dayjs.tz) {
         return st.toDate().getTimezoneOffset() - ed.toDate().getTimezoneOffset()
       }
-      /**
-       * If a default timezone has been applied, then
-       * use this to get the proper timezone offset, otherwise default
-       * the timezone to the browser local
-       */
       var tzName =
         (_st$tz$$x$$timezone = st.tz().$x.$timezone) !== null &&
         _st$tz$$x$$timezone !== void 0
           ? _st$tz$$x$$timezone
           : dayjsLib.tz.guess()
-      // invert offsets to be inline with moment.js
       var startOffset = -dayjs.tz(+st, tzName).utcOffset()
       var endOffset = -dayjs.tz(+ed, tzName).utcOffset()
       return startOffset - endOffset
     }
 
-    /*** BEGIN localized date arithmetic methods with dayjs ***/
+    /*** DATE ARITHMETIC HELPERS ***/
     function defineComparators(a, b, unit) {
       var datePart = fixUnit(unit)
       var dtA = datePart ? dayjs(a).startOf(datePart) : dayjs(a)
@@ -55707,36 +55675,29 @@
         arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
       var unit = arguments.length > 1 ? arguments[1] : undefined
       var datePart = fixUnit(unit)
-      if (datePart) {
-        return dayjs(date).startOf(datePart).toDate()
-      }
-      return dayjs(date).toDate()
+      return datePart
+        ? dayjs(date).startOf(datePart).toDate()
+        : dayjs(date).toDate()
     }
     function endOf() {
       var date =
         arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null
       var unit = arguments.length > 1 ? arguments[1] : undefined
       var datePart = fixUnit(unit)
-      if (datePart) {
-        return dayjs(date).endOf(datePart).toDate()
-      }
-      return dayjs(date).toDate()
+      return datePart
+        ? dayjs(date).endOf(datePart).toDate()
+        : dayjs(date).toDate()
     }
-
-    // dayjs comparison operations *always* convert both sides to dayjs objects
-    // prior to running the comparisons
     function eq(a, b, unit) {
       var datePart = fixUnit(unit)
-      // For month/year comparisons, use year/month values directly to avoid DST issues
       if (datePart === 'month') {
-        var _dtA = dayjs(a)
-        var _dtB = dayjs(b)
-        return _dtA.year() === _dtB.year() && _dtA.month() === _dtB.month()
+        return (
+          dayjs(a).year() === dayjs(b).year() &&
+          dayjs(a).month() === dayjs(b).month()
+        )
       }
       if (datePart === 'year') {
-        var _dtA2 = dayjs(a)
-        var _dtB2 = dayjs(b)
-        return _dtA2.year() === _dtB2.year()
+        return dayjs(a).year() === dayjs(b).year()
       }
       var _defineComparators = defineComparators(a, b, unit),
         _defineComparators2 = _slicedToArray(_defineComparators, 2),
@@ -55785,33 +55746,22 @@
           ? arguments[3]
           : 'day'
       var datePart = fixUnit(unit)
-      var djDay = dayjs(day)
-      var djMin = dayjs(min)
-      var djMax = dayjs(max)
-      return djDay.isBetween(djMin, djMax, datePart, '[]')
+      return dayjs(day).isBetween(dayjs(min), dayjs(max), datePart, '[]')
     }
     function min(dateA, dateB) {
-      var dtA = dayjs(dateA)
-      var dtB = dayjs(dateB)
-      var minDt = dayjsLib.min(dtA, dtB)
-      return minDt.toDate()
+      return dayjsLib.min(dayjs(dateA), dayjs(dateB)).toDate()
     }
     function max(dateA, dateB) {
-      var dtA = dayjs(dateA)
-      var dtB = dayjs(dateB)
-      var maxDt = dayjsLib.max(dtA, dtB)
-      return maxDt.toDate()
+      return dayjsLib.max(dayjs(dateA), dayjs(dateB)).toDate()
     }
     function merge(date, time) {
       if (!date && !time) return null
       var tm = dayjs(time).format('HH:mm:ss')
       var dt = dayjs(date).startOf('day').format('MM/DD/YYYY')
-      // We do it this way to avoid issues when timezone switching
       return dayjsLib(''.concat(dt, ' ').concat(tm)).toDate()
     }
     function add(date, adder, unit) {
-      var datePart = fixUnit(unit)
-      return dayjs(date).add(adder, datePart).toDate()
+      return dayjs(date).add(adder, fixUnit(unit)).toDate()
     }
     function range(start, end) {
       var unit =
@@ -55819,121 +55769,81 @@
           ? arguments[2]
           : 'day'
       var datePart = fixUnit(unit)
-      // because the add method will put these in tz, we have to start that way
-      var current = dayjs(start).toDate()
+      var current = dayjs(start).startOf(datePart)
       var days = []
-      while (lte(current, end)) {
-        days.push(current)
-        current = add(current, 1, datePart)
+      while (current.isSameOrBefore(dayjs(end), datePart)) {
+        days.push(current.toDate())
+        current = current.add(1, datePart)
       }
       return days
     }
     function ceil(date, unit) {
-      var datePart = fixUnit(unit)
-      var floor = startOf(date, datePart)
-      return eq(floor, date) ? floor : add(floor, 1, datePart)
+      var floor = startOf(date, unit)
+      return eq(floor, date) ? floor : add(floor, 1, unit)
     }
     function diff(a, b) {
       var unit =
         arguments.length > 2 && arguments[2] !== undefined
           ? arguments[2]
           : 'day'
-      var datePart = fixUnit(unit)
-      // don't use 'defineComparators' here, as we don't want to mutate the values
-      var dtA = dayjs(a)
-      var dtB = dayjs(b)
-      return dtB.diff(dtA, datePart)
+      return dayjs(b).diff(dayjs(a), fixUnit(unit))
     }
     function minutes(date) {
-      var dt = dayjs(date)
-      return dt.minutes()
+      return dayjs(date).minutes()
     }
     function firstOfWeek(culture) {
       var data = culture ? dayjsLib.localeData(culture) : dayjsLib.localeData()
       return data ? data.firstDayOfWeek() : 0
     }
+
+    /*** FIXED DAY/VISIBLE DAY GENERATION ***/
     function firstVisibleDay(date) {
-      var firstDayOfMonth = dayjs(date).startOf('month')
-      var firstDayOfWeek = dayjs(firstDayOfMonth).startOf('week')
-      // special handling for leapyears until Dayjs patches it
-      if (dayjs(firstDayOfMonth).isLeapYear()) {
-        var day = firstDayOfMonth.toDate().getDay(),
-          _diff = firstDayOfMonth.toDate().getDate() - day + (day == 0 ? -6 : 1)
-        firstDayOfWeek.date(_diff)
-      }
-      return firstDayOfWeek.toDate()
+      return dayjs(date)
+        .startOf('month')
+        .startOf('week')
+        .startOf('day')
+        .toDate()
     }
     function lastVisibleDay(date) {
-      return dayjs(date).endOf('month').endOf('week').toDate()
+      return dayjs(date).endOf('month').endOf('week').endOf('day').toDate()
     }
     function visibleDays(date) {
-      var current = firstVisibleDay(date)
-      var last = lastVisibleDay(date)
+      var current = dayjs(date).startOf('month').startOf('week').startOf('day')
+      var last = dayjs(date).endOf('month').endOf('week').startOf('day')
       var days = []
-      while (lte(current, last)) {
-        days.push(current)
-        // Force a clean date increment by going through startOf twice
-        var next = dayjs(current).add(1, 'day')
-        current = dayjs(next.format('YYYY-MM-DD')).toDate()
+      while (current.isSameOrBefore(last, 'day')) {
+        days.push(current.toDate())
+        current = current.add(1, 'day').startOf('day')
       }
       return days
     }
-    /*** END localized date arithmetic methods with dayjs ***/
 
-    /**
-     * Moved from TimeSlots.js, this method overrides the method of the same name
-     * in the localizer.js, using dayjs to construct the js Date
-     * @param {Date} dt - date to start with
-     * @param {Number} minutesFromMidnight
-     * @param {Number} offset
-     * @returns {Date}
-     */
+    /*** SLOT / MINUTES ***/
     function getSlotDate(dt, minutesFromMidnight, offset) {
       return dayjs(dt)
         .startOf('day')
         .minute(minutesFromMidnight + offset)
         .toDate()
     }
-
-    // dayjs will automatically handle DST differences in it's calculations
     function getTotalMin(start, end) {
-      // Instead of using actual elapsed time, calculate based on clock time
-      // to avoid DST creating 25-hour or 23-hour days in the UI
       var startMinutes = getMinutesFromMidnight(start)
       var endMinutes = getMinutesFromMidnight(end)
-
-      // If end is on a different day, add 1440 minutes per day
       var dayDiff = diff(start, end, 'day')
       return dayDiff * 1440 + (endMinutes - startMinutes)
     }
     function getMinutesFromMidnight(start) {
-      var day = dayjs(start)
-
-      // Use the actual hour and minute values rather than diff
-      // This ensures we always get 0-1440 minutes regardless of DST
-      var hours = day.hour()
-      var minutes = day.minute()
-      return hours * 60 + minutes
+      var d = dayjs(start)
+      return d.hour() * 60 + d.minute()
     }
-
-    // These two are used by DateSlotMetrics
     function continuesPrior(start, first) {
-      var djStart = dayjs(start)
-      var djFirst = dayjs(first)
-      return djStart.isBefore(djFirst, 'day')
+      return dayjs(start).isBefore(dayjs(first), 'day')
     }
     function continuesAfter(start, end, last) {
-      var djEnd = dayjs(end)
-      var djLast = dayjs(last)
-      return djEnd.isSameOrAfter(djLast, 'minutes')
+      return dayjs(end).isSameOrAfter(dayjs(last), 'minute')
     }
     function daySpan(start, end) {
-      var startDay = dayjs(start)
-      var endDay = dayjs(end)
-      return endDay.diff(startDay, 'day')
+      return dayjs(end).diff(dayjs(start), 'day')
     }
-
-    // These two are used by eventLevels
     function sortEvents(_ref6) {
       var _ref6$evtA = _ref6.evtA,
         aStart = _ref6$evtA.start,
@@ -55948,16 +55858,14 @@
       var durB = daySpan(bStart, bEnd)
       return (
         startSort ||
-        // sort by start Day first
         durB - durA ||
-        // events spanning multiple days go first
         !!bAllDay - !!aAllDay ||
-        // then allDay single day events
         +aStart - +bStart ||
-        // then sort by start time *don't need dayjs conversion here
-        +aEnd - +bEnd // then sort by end time *don't need dayjs conversion here either
+        +aEnd - +bEnd
       )
     }
+
+    /*** FIXED inEventRange ***/
     function inEventRange(_ref7) {
       var _ref7$event = _ref7.event,
         start = _ref7$event.start,
@@ -55965,43 +55873,22 @@
         _ref7$range = _ref7.range,
         rangeStart = _ref7$range.start,
         rangeEnd = _ref7$range.end
-      // Use the date string to avoid DST issues
-      var startOfDay = dayjs(dayjs(start).format('YYYY-MM-DD')).toDate()
-      var eEnd = dayjs(end)
-      var rStart = dayjs(rangeStart)
-      var rEnd = dayjs(rangeEnd)
-      var startsBeforeEnd = dayjs(startOfDay).isSameOrBefore(rEnd, 'day')
-      // when the event is zero duration we need to handle a bit differently
-      var sameMin = !dayjs(startOfDay).isSame(eEnd, 'minutes')
-      var endsAfterStart = sameMin
-        ? eEnd.isAfter(rStart, 'minutes')
-        : eEnd.isSameOrAfter(rStart, 'minutes')
-      var result = startsBeforeEnd && endsAfterStart
-      return result
+      var s = dayjs(start)
+      var e = dayjs(end)
+      var rS = dayjs(rangeStart).startOf('day')
+      var rE = dayjs(rangeEnd).endOf('day')
+      var overlaps =
+        s.isSameOrBefore(rE, 'minute') && e.isSameOrAfter(rS, 'minute')
+      return overlaps
     }
     function isSameDate(date1, date2) {
-      var dt = dayjs(date1)
-      var dt2 = dayjs(date2)
-      return dt.isSame(dt2, 'day')
+      return dayjs(date1).isSame(dayjs(date2), 'day')
     }
-
-    /**
-     * This method, called once in the localizer constructor, is used by eventLevels
-     * 'eventSegments()' to assist in determining the 'span' of the event in the display,
-     * specifically when using a timezone that is greater than the browser native timezone.
-     * @returns number
-     */
     function browserTZOffset() {
-      /**
-       * Date.prototype.getTimezoneOffset horrifically flips the positive/negative from
-       * what you see in it's string, so we have to jump through some hoops to get a value
-       * we can actually compare.
-       */
       var dt = new Date()
       var neg = /-/.test(dt.toString()) ? '-' : ''
       var dtOffset = dt.getTimezoneOffset()
       var comparator = Number(''.concat(neg).concat(Math.abs(dtOffset)))
-      // dayjs correctly provides positive/negative offset, as expected
       var mtOffset = dayjs().utcOffset()
       return mtOffset > comparator ? 1 : 0
     }
