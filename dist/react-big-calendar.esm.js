@@ -2601,6 +2601,12 @@ var Header = function Header(_ref) {
     label
   )
 }
+Header.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        label: PropTypes.node,
+      }
+    : {}
 
 var DateHeader = function DateHeader(_ref) {
   var label = _ref.label,
@@ -2619,6 +2625,16 @@ var DateHeader = function DateHeader(_ref) {
     label
   )
 }
+DateHeader.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        label: PropTypes.node,
+        date: PropTypes.instanceOf(Date),
+        drilldownView: PropTypes.string,
+        onDrillDown: PropTypes.func,
+        isOffRange: PropTypes.bool,
+      }
+    : {}
 
 var _excluded$6 = ['date', 'className']
 var eventsForWeek = function eventsForWeek(
@@ -3099,7 +3115,7 @@ function getSlotMetrics(_ref2) {
   // DST differences are handled inside the localizer
   var totalMin = 1 + localizer.getTotalMin(start, end)
   var minutesFromMidnight = localizer.getMinutesFromMidnight(start)
-  var numGroups = Math.ceil((totalMin - 1) / (step * timeslots))
+  var numGroups = Math.min(24, Math.ceil((totalMin - 1) / (step * timeslots)))
   var numSlots = numGroups * timeslots
   var groups = new Array(numGroups)
   var slots = new Array(numSlots)
@@ -3625,6 +3641,16 @@ var TimeSlotGroup = /*#__PURE__*/ (function (_Component) {
     },
   ])
 })(Component)
+TimeSlotGroup.propTypes =
+  process.env.NODE_ENV !== 'production'
+    ? {
+        renderSlot: PropTypes.func,
+        group: PropTypes.array.isRequired,
+        resource: PropTypes.any,
+        components: PropTypes.object,
+        getters: PropTypes.object,
+      }
+    : {}
 
 function stringifyPercent(v) {
   return typeof v === 'string' ? v : v + '%'
@@ -4215,7 +4241,7 @@ var DayColumn = /*#__PURE__*/ (function (_React$Component) {
             slotMetrics: slotMetrics,
             resource: resource,
           },
-          slotMetrics.groups.slice(0, 24).map(function (grp, idx) {
+          slotMetrics.groups.map(function (grp, idx) {
             return /*#__PURE__*/ React.createElement(TimeSlotGroup, {
               key: idx,
               group: grp,
