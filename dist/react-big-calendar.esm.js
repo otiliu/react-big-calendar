@@ -2619,16 +2619,6 @@ var DateHeader = function DateHeader(_ref) {
     label
   )
 }
-DateHeader.propTypes =
-  process.env.NODE_ENV !== 'production'
-    ? {
-        label: PropTypes.node,
-        date: PropTypes.instanceOf(Date),
-        drilldownView: PropTypes.string,
-        onDrillDown: PropTypes.func,
-        isOffRange: PropTypes.bool,
-      }
-    : {}
 
 var _excluded$6 = ['date', 'className']
 var eventsForWeek = function eventsForWeek(
@@ -4225,7 +4215,7 @@ var DayColumn = /*#__PURE__*/ (function (_React$Component) {
             slotMetrics: slotMetrics,
             resource: resource,
           },
-          slotMetrics.groups.map(function (grp, idx) {
+          slotMetrics.groups.slice(0, 24).map(function (grp, idx) {
             return /*#__PURE__*/ React.createElement(TimeSlotGroup, {
               key: idx,
               group: grp,

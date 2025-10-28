@@ -3166,7 +3166,6 @@
       })()
     }
   })(react_development)
-
   ;(function (module) {
     {
       module.exports = react_development
@@ -9287,14 +9286,12 @@
     var popperInstanceRef = reactExports.useRef()
     var update = reactExports.useCallback(function () {
       var _popperInstanceRef$cu
-
       ;(_popperInstanceRef$cu = popperInstanceRef.current) == null
         ? void 0
         : _popperInstanceRef$cu.update()
     }, [])
     var forceUpdate = reactExports.useCallback(function () {
       var _popperInstanceRef$cu2
-
       ;(_popperInstanceRef$cu2 = popperInstanceRef.current) == null
         ? void 0
         : _popperInstanceRef$cu2.forceUpdate()
@@ -10151,7 +10148,6 @@
       })()
     }
   })(scheduler_development)
-
   ;(function (module) {
     {
       module.exports = scheduler_development
@@ -10520,7 +10516,6 @@
       })()
     }
   })(schedulerTracing_development)
-
   ;(function (module) {
     {
       module.exports = schedulerTracing_development
@@ -10918,7 +10913,6 @@
         )
       }) // A few React string attributes have a different name.
       // This is a mapping from React prop names to the attribute names.
-
       ;[
         ['acceptCharset', 'accept-charset'],
         ['className', 'class'],
@@ -10939,7 +10933,6 @@
       }) // These are "enumerated" HTML attributes that accept "true" and "false".
       // In React, we let users pass `true` and `false` even though technically
       // these aren't boolean attributes (they are coerced to strings).
-
       ;['contentEditable', 'draggable', 'spellCheck', 'value'].forEach(
         function (name) {
           properties[name] = new PropertyInfoRecord(
@@ -10956,7 +10949,6 @@
       // In React, we let users pass `true` and `false` even though technically
       // these aren't boolean attributes (they are coerced to strings).
       // Since these are SVG attributes, their attribute names are case-sensitive.
-
       ;[
         'autoReverse',
         'externalResourcesRequired',
@@ -10973,7 +10965,6 @@
           false
         )
       }) // These are HTML boolean attributes.
-
       ;[
         'allowFullScreen',
         'async', // Note: there is a special case that prevents it from being written to the DOM
@@ -11011,7 +11002,6 @@
         )
       }) // These are the few React props that we set as DOM properties
       // rather than attributes. These are all booleans.
-
       ;[
         'checked', // Note: `option.selected` is not updated if `select.multiple` is
         // disabled with `removeAttribute`. We have special logic for handling this.
@@ -11032,7 +11022,6 @@
         )
       }) // These are HTML attributes that are "overloaded booleans": they behave like
       // booleans, but can also accept a string value.
-
       ;[
         'capture',
         'download', // NOTE: if you add a camelCased prop to this list,
@@ -11049,7 +11038,6 @@
           false
         )
       }) // These are HTML attributes that must be positive numbers.
-
       ;[
         'cols',
         'rows',
@@ -11068,7 +11056,6 @@
           false
         )
       }) // These are HTML attributes that must be numbers.
-
       ;['rowSpan', 'start'].forEach(function (name) {
         properties[name] = new PropertyInfoRecord(
           name,
@@ -11178,7 +11165,6 @@
           false
         )
       }) // String SVG attributes with the xlink namespace.
-
       ;[
         'xlink:actuate',
         'xlink:arcrole',
@@ -11200,7 +11186,6 @@
           false
         )
       }) // String SVG attributes with the xml namespace.
-
       ;[
         'xml:base',
         'xml:lang',
@@ -11221,7 +11206,6 @@
       }) // These attribute exists both in HTML and SVG.
       // The attribute name is case-sensitive in SVG so we can't just use
       // the React name like we do for attributes that exist only in HTML.
-
       ;['tabIndex', 'crossOrigin'].forEach(function (attributeName) {
         properties[attributeName] = new PropertyInfoRecord(
           attributeName,
@@ -46086,6 +46070,15 @@
       },
     ])
   })(React.Component)
+  EventRow.propTypes =
+    'development' !== 'production'
+      ? _objectSpread2(
+          {
+            segments: propTypesExports.array,
+          },
+          EventRowMixin.propTypes
+        )
+      : {}
   EventRow.defaultProps = _objectSpread2({}, EventRowMixin.defaultProps)
 
   /**
@@ -47824,16 +47817,6 @@
       label
     )
   }
-  DateHeader.propTypes =
-    'development' !== 'production'
-      ? {
-          label: propTypesExports.node,
-          date: propTypesExports.instanceOf(Date),
-          drilldownView: propTypesExports.string,
-          onDrillDown: propTypesExports.func,
-          isOffRange: propTypesExports.bool,
-        }
-      : {}
 
   var _excluded$6 = ['date', 'className']
   var eventsForWeek = function eventsForWeek(
@@ -50081,7 +50064,7 @@
               slotMetrics: slotMetrics,
               resource: resource,
             },
-            slotMetrics.groups.map(function (grp, idx) {
+            slotMetrics.groups.slice(0, 24).map(function (grp, idx) {
               return /*#__PURE__*/ React.createElement(TimeSlotGroup, {
                 key: idx,
                 group: grp,
@@ -51659,17 +51642,6 @@
       },
     ])
   })(React.Component)
-  WorkWeek.propTypes =
-    'development' !== 'production'
-      ? {
-          date: propTypesExports.instanceOf(Date).isRequired,
-          localizer: propTypesExports.any,
-          min: propTypesExports.instanceOf(Date),
-          max: propTypesExports.instanceOf(Date),
-          scrollToTime: propTypesExports.instanceOf(Date),
-          enableAutoScroll: propTypesExports.bool,
-        }
-      : {}
   WorkWeek.defaultProps = TimeGrid.defaultProps
   WorkWeek.range = workWeekRange
   WorkWeek.navigate = Week.navigate

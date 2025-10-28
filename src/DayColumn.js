@@ -152,7 +152,7 @@ class DayColumn extends React.Component {
         slotMetrics={slotMetrics}
         resource={resource}
       >
-        {slotMetrics.groups.map((grp, idx) => (
+        {slotMetrics.groups.slice(0, 24).map((grp, idx) => (
           <TimeSlotGroup
             key={idx}
             group={grp}
