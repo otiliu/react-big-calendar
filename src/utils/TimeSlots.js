@@ -15,7 +15,7 @@ export function getSlotMetrics({
   // DST differences are handled inside the localizer
   const totalMin = 1 + localizer.getTotalMin(start, end)
   const minutesFromMidnight = localizer.getMinutesFromMidnight(start)
-  const numGroups = Math.ceil((totalMin - 1) / (step * timeslots))
+  const numGroups = Math.min(24, Math.ceil((totalMin - 1) / (step * timeslots)))
   const numSlots = numGroups * timeslots
 
   const groups = new Array(numGroups)
